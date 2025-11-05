@@ -1,0 +1,17 @@
+[
+  { "id": 1, "name": "Electronics","image": "https://img.icons8.com/isometric-line/50/electronics.png" },
+  { "id": 2, "name": "Fashion","image":"https://img.icons8.com/color/96/choose_a_dress.png" },
+  { "id": 3, "name": "Home & Kitchen","image":"https://img.icons8.com/officel/80/kitchen-room.png" },
+  { "id": 4, "name": "Beauty & Personal Care","image":"https://img.icons8.com/ios/100/cleansing.png" },
+  { "id": 5, "name": "Sports & Outdoors","image":"https://img.icons8.com/ios-filled/100/volleyball-2.png" },
+  { "id": 6, "name": "Books","image":"https://img.icons8.com/pastel-glyph/100/books-1.png" },
+  { "id": 7, "name": "Toys & Games","image":"https://img.icons8.com/ios/100/gaming.png" },
+  { "id": 8, "name": "Health & Wellness","image":"https://img.icons8.com/emoji/96/stethoscope-emoji.png" },
+  { "id": 9, "name": "Automotive","image":"https://img.icons8.com/quill/100/automotive.png" },
+  { "id": 10, "name": "Jewelry & Accessories","image":"https://img.icons8.com/dotty/100/jewelry.png" },
+  { "id": 11, "name": "Office Supplies","image":"https://img.icons8.com/external-flaticons-flat-flat-icons/64/external-office-supplies-office-and-office-supplies-flaticons-flat-flat-icons-3.png" },
+  { "id": 12, "name": "Pet Supplies","image":"https://img.icons8.com/external-flaticons-lineal-color-flat-icons/64/external-pet-supplies-merchandising-flaticons-lineal-color-flat-icons.png" },
+  { "id": 13, "name": "Baby Products","image":"https://img.icons8.com/external-wanicon-flat-wanicon/64/external-baby-products-supermarket-wanicon-flat-wanicon.png" },
+  { "id": 14, "name": "Furniture","image":"https://img.icons8.com/ios/100/furniture.png" },
+  { "id": 15, "name": "Groceries","image":"https://img.icons8.com/ios/100/fast-moving-consumer-goods.png" }
+]
