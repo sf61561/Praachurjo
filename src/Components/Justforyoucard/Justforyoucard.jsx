@@ -1,16 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useCart } from "../Context/CartContext";
 import { Link } from "react-router-dom";
-import { FiShoppingCart, FiHeart, FiEye, FiStar, FiCheck } from "react-icons/fi";
-import "./Justforyoucard.css";
-import { Button } from "@material-tailwind/react";
+import { FiShoppingCart, FiHeart, FiStar, FiCheck } from "react-icons/fi";
 
 const Justforyoucard = ({ product, index }) => {
   const { cart, setCart } = useCart();
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
   const [isAdded, setIsAdded] = useState(false);
-  const [showQuickView, setShowQuickView] = useState(false);
   const [imageError, setImageError] = useState(false);
   const cardRef = useRef(null);
 
@@ -107,46 +104,45 @@ const Justforyoucard = ({ product, index }) => {
   return (
     <article
       ref={cardRef}
-      className="product-card"
+      className="flex flex-col backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl overflow-hidden hover:border-pink-400 hover:shadow-[0_12px_28px_rgba(236,72,153,0.25)] hover:-translate-y-1 transition-all duration-300 group"
       role="listitem"
-      style={{ animationDelay: `${index * 0.05}s` }}
     >
       {/* Image Container */}
       <Link
         to={`/product/${product.id}`}
-        className="product-image-container"
+        className="relative block w-full aspect-square overflow-hidden bg-white/5"
         aria-label={`View details for ${product.title}`}
       >
         {/* Badges */}
-        <div className="product-badges">
+        <div className="absolute top-3 left-3 flex flex-col gap-2 z-10">
           {product.isNew && (
-            <span className="badge-new">New</span>
+            <span className="px-3 py-1 bg-gradient-to-r from-pink-500 to-purple-500 text-white text-xs font-bold rounded-full shadow-lg">New</span>
           )}
           {product.discount && (
-            <span className="badge-discount">-{product.discount}%</span>
+            <span className="px-3 py-1 bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs font-bold rounded-full shadow-lg">-{product.discount}%</span>
           )}
         </div>
 
         {/* Wishlist Button */}
         <button
-          className={`wishlist-btn ${isWishlisted ? "active" : ""}`}
+          className={`absolute top-3 right-3 z-10 w-10 h-10 flex items-center justify-center backdrop-blur-sm bg-white/20 hover:bg-white/30 border border-white/30 rounded-full transition-all duration-200 ${isWishlisted ? 'bg-pink-500 border-pink-500 text-white' : 'text-white'}`}
           onClick={handleWishlist}
           aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
           aria-pressed={isWishlisted}
         >
-          <FiHeart className="wishlist-icon" aria-hidden="true" />
+          <FiHeart className={`text-lg ${isWishlisted ? 'fill-current' : ''}`} aria-hidden="true" />
         </button>
 
         {/* Product Image */}
         {imageError ? (
-          <div className="image-fallback">
+          <div className="w-full h-full flex items-center justify-center text-6xl">
             <span>📦</span>
           </div>
         ) : (
           <img
             src={product.image}
             alt={product.title}
-            className="product-image"
+            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
             onError={handleImageError}
             loading="lazy"
           />
@@ -154,17 +150,17 @@ const Justforyoucard = ({ product, index }) => {
       </Link>
 
       {/* Product Info */}
-      <div className="product-info">
+      <div className="p-5 flex flex-col gap-3">
         {/* Rating */}
         {product.rating && (
           <div 
-            className="product-rating"
+            className="flex items-center gap-2"
             aria-label={`Rated ${product.rating} out of 5 stars`}
           >
-            <div className="rating-stars">
+            <div className="flex items-center gap-1 text-yellow-400">
               {renderStars()}
             </div>
-            <span className="rating-count">
+            <span className="text-xs text-white/60">
               ({product.reviewCount})
             </span>
           </div>
@@ -172,29 +168,29 @@ const Justforyoucard = ({ product, index }) => {
 
         {/* Title */}
         <Link to={`/product/${product.id}`}>
-          <h3 className="product-title" title={product.title}>
+          <h3 className="text-lg font-bold text-white line-clamp-2 hover:text-pink-300 transition-colors duration-200" title={product.title}>
             {product.title}
           </h3>
         </Link>
 
         {/* Category */}
         {product.category && (
-          <div className="product-category">
-            <span>{product.category}</span>
+          <div className="flex items-center">
+            <span className="text-sm text-white/50 font-medium">{product.category}</span>
           </div>
         )}
 
         {/* Pricing */}
-        <div className="product-pricing">
-          <span className="price-current">
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-2xl font-bold text-white">
             ৳{getDiscountedPrice()}
           </span>
           {product.discount && (
             <>
-              <span className="price-original">
+              <span className="text-sm text-white/50 line-through">
                 ৳{product.price}
               </span>
-              <span className="price-save">
+              <span className="text-xs text-pink-300 font-semibold">
                 Save ৳{(product.price - getDiscountedPrice()).toFixed(2)}
               </span>
             </>
@@ -203,14 +199,18 @@ const Justforyoucard = ({ product, index }) => {
 
         {/* View Details Button */}
         <Link to={`/products/${product.id}`}>
-        <button className={`btn-add-to-cart mb-3 ${isAdding ? "loading" : ""} ${isAdded ? "success" : ""}`}
-          aria-busy={isAdding}
-        >View Details
-        </button> </Link>
+          <button className="w-full py-3 px-4 backdrop-blur-sm bg-white/10 hover:bg-white/20 border border-white/30 hover:border-white/50 text-white font-semibold rounded-xl transition-all duration-150 mb-2">
+            View Details
+          </button>
+        </Link>
         
         {/* Add to Cart Button */}
         <button
-          className={`btn-add-to-cart ${isAdding ? "loading" : ""} ${isAdded ? "success" : ""}`}
+          className={`w-full py-3 px-4 flex items-center justify-center gap-2 font-semibold rounded-xl transition-all duration-150 ${
+            isAdded 
+              ? 'bg-green-500 text-white' 
+              : 'bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-white hover:shadow-lg hover:scale-105'
+          } disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden`}
           onClick={handleAddToCart}
           disabled={isAdding || isAdded}
           aria-label={`Add ${product.title} to cart for ${getDiscountedPrice()} Taka`}
@@ -218,12 +218,12 @@ const Justforyoucard = ({ product, index }) => {
         >
           {isAdded ? (
             <>
-              <FiCheck className="btn-icon" aria-hidden="true" />
+              <FiCheck className="text-xl" aria-hidden="true" />
               <span>Added to Cart</span>
             </>
           ) : (
             <>
-              <FiShoppingCart className="btn-icon" aria-hidden="true" />
+              <FiShoppingCart className="text-xl" aria-hidden="true" />
               <span>{isAdding ? "Adding..." : "Add to Cart"}</span>
             </>
           )}

@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { FiSearch } from 'react-icons/fi';
 import Category from '../Category/Category';
-import './Categories.css';
 
 const Categories = () => {
     const [categories, setCategories] = useState([]);
@@ -57,10 +56,10 @@ const Categories = () => {
     const renderSkeleton = () => (
         <>
             {[...Array(10)].map((_, index) => (
-                <div key={`skeleton-${index}`} className="category-skeleton">
-                    <div className="skeleton-icon"></div>
-                    <div className="skeleton-text"></div>
-                    <div className="skeleton-count"></div>
+                <div key={`skeleton-${index}`} className="flex flex-col items-center justify-center gap-4 p-6 min-h-[200px] bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-2xl animate-pulse">
+                    <div className="w-16 h-16 bg-white/20 rounded-full"></div>
+                    <div className="w-24 h-4 bg-white/20 rounded"></div>
+                    <div className="w-16 h-3 bg-white/20 rounded"></div>
                 </div>
             ))}
         </>
@@ -68,16 +67,16 @@ const Categories = () => {
 
     // Empty state
     const renderEmptyState = () => (
-        <div className="empty-state">
-            <FiSearch className="empty-icon" />
-            <h3 className="empty-title">No categories found</h3>
-            <p className="empty-description">
+        <div className="col-span-full flex flex-col items-center justify-center py-20 px-6 backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl">
+            <FiSearch className="text-6xl text-white/60 mb-6" />
+            <h3 className="text-2xl font-bold text-white mb-3">No categories found</h3>
+            <p className="text-white/70 text-center mb-6 max-w-md">
                 Try adjusting your search or browse all categories
             </p>
             {searchTerm && (
                 <button 
                     onClick={() => setSearchTerm('')}
-                    className="empty-button"
+                    className="px-6 py-3 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-white font-semibold rounded-xl hover:shadow-lg hover:scale-105 transition-all duration-150"
                 >
                     Clear Search
                 </button>
@@ -87,13 +86,13 @@ const Categories = () => {
 
     // Error state
     const renderError = () => (
-        <div className="error-state">
-            <div className="error-icon">⚠️</div>
-            <h3 className="error-title">Failed to load categories</h3>
-            <p className="error-description">{error}</p>
+        <div className="col-span-full flex flex-col items-center justify-center py-20 px-6 backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl">
+            <div className="text-6xl mb-6">⚠️</div>
+            <h3 className="text-2xl font-bold text-white mb-3">Failed to load categories</h3>
+            <p className="text-white/70 text-center mb-6">{error}</p>
             <button 
                 onClick={() => window.location.reload()}
-                className="error-button"
+                className="px-6 py-3 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-white font-semibold rounded-xl hover:shadow-lg hover:scale-105 transition-all duration-150"
             >
                 Retry
             </button>
@@ -101,13 +100,13 @@ const Categories = () => {
     );
 
     return (
-        <section className="categories-section" aria-label="Product categories">
-            <div className="categories-container">
+        <section className="w-full py-16" aria-label="Product categories">
+            <div className="max-w-[1280px] mx-auto px-20">
                 {/* Header with Search */}
-                <div className="categories-header">
-                    <div className="header-content">
-                        <h2 className="categories-title">Categories</h2>
-                        <p className="categories-subtitle">
+                <div className="flex items-start justify-between gap-8 mb-12">
+                    <div className="flex-1">
+                        <h2 className="text-4xl font-extrabold text-white mb-2 tracking-tight">Categories</h2>
+                        <p className="text-base text-white/70">
                             {loading 
                                 ? 'Loading categories...' 
                                 : `Browse our collection of ${categories.length} categories`
@@ -115,12 +114,12 @@ const Categories = () => {
                         </p>
                     </div>
                     
-                    <div className="search-container">
-                        <FiSearch className="search-icon" aria-hidden="true" />
+                    <div className="relative w-full max-w-[320px] flex-shrink-0">
+                        <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-white/60 text-lg pointer-events-none" aria-hidden="true" />
                         <input
                             type="text"
                             placeholder="Search categories..."
-                            className="search-input"
+                            className="w-full py-3 pl-12 pr-12 backdrop-blur-sm bg-white/20 border-2 border-white/30 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-pink-400 focus:ring-4 focus:ring-pink-400/20 transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             aria-label="Search categories"
@@ -129,7 +128,7 @@ const Categories = () => {
                         {searchTerm && (
                             <button
                                 onClick={() => setSearchTerm('')}
-                                className="search-clear"
+                                className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center bg-white/20 hover:bg-white/30 border-none rounded-full text-white text-lg cursor-pointer transition-all duration-150 hover:scale-110"
                                 aria-label="Clear search"
                             >
                                 ×
@@ -151,10 +150,12 @@ const Categories = () => {
 
                 {/* Categories Grid */}
                 {error ? (
-                    renderError()
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6" role="list">
+                        {renderError()}
+                    </div>
                 ) : (
                     <div 
-                        className="categories-grid"
+                        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6"
                         role="list"
                     >
                         {loading ? (
