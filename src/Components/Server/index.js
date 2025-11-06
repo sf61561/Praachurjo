@@ -164,6 +164,19 @@ app.get("/:user/track",(req,res) => {
     });
 })
 
+app.post("/review/:id/add", (req, res) => {
+    const productId = parseInt(req.params.id);
+    const {  user, star, review, date } = req.body;
+    if (!user || !star || !review || !date) {
+        return res.status(400).json({ error: "User, star, review, and date are required" });
+    }
+    const sql = "INSERT INTO reviews (product_id, reviewer, number_of_star, review_description, date) VALUES (?, ?, ?, ?, ?)";
+    con.query(sql, [productId, user, star, review, date], (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ message: "Review added successfully" });
+    });
+});
+
 app.post("/cart/add", (req, res) => {
     const { user, cart, cartCounts } = req.body;
     console.log(cart);
