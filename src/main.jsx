@@ -14,6 +14,7 @@ import Admin from './Components/Admin/Admin.jsx'
 import Track from './Components/Track/Track.jsx'
 import Search from './Components/Search/Search.jsx'
 import Productdetails from './Components/Productdetails/Productdetails.jsx'
+import Become_a_seller from './Components/Become_a_seller/Become_a_seller.jsx'
 
 
 const router = createBrowserRouter([
@@ -34,6 +35,10 @@ const router = createBrowserRouter([
         element: <Signup />
       }
     ]
+  },
+  {
+    path: '/becomeaseller',
+    element:<Become_a_seller />
   },
   {
     path: '/products/:id',
