@@ -1,74 +1,107 @@
 import React, { useEffect, useState } from 'react';
-import { FiCheck, FiShoppingCart, FiMapPin, FiPhone, FiMail } from 'react-icons/fi';
+import { FiCheck, FiShoppingCart } from 'react-icons/fi';
 import { useParams } from 'react-router-dom';
 import Navbar from '../Navbar/Navbar';
 
 const Productdetails = () => {
-    const { id } =useParams();
-    const [product,setProduct] = useState([]);
-    const [reviews,setReviews] = useState([]);
+    const { id } = useParams();
+    const [product, setProduct] = useState([]);
+    const [reviews, setReviews] = useState([]);
+    const [reviewStats, setReviewStats] = useState(null);
     const [quantity, setQuantity] = useState(0);
     const [isAdding] = useState(false);
     const [isAdded] = useState(false);
-    const [user, setUser] = useState(null); 
-    const [carts, setCarts] = useState([]);
-    useEffect(() => {
-        fetch("http://localhost:5000/", { credentials: 'include' })
-            .then(response => response.json())
-            .then(data => {
-                setUser(data.user);
-                setCarts(data.carts);
-            })
-            .catch(error => console.error("Error fetching data:", error));
-    }, []);  
+    console.log(id);
     useEffect(() => {
         fetch(`http://localhost:5000/products/${id}`)
             .then(response => response.json())
             .then(data => {
                 setProduct(data);
-                console.log("Product details fetched:", data);
+                console.log("✅ Product details fetched:", data);
             })
             .catch(error => {
-                console.error("Error fetching product details:", error);
+                console.error("❌ Error fetching product details:", error);
             });
     }, [id]);
     useEffect(() => {
-        fetch(`http://localhost:5000/products/${id}/seller`)
-            .then(response => response.json())
-            .then(data => {
-                setProduct(data);
-                console.log("Product seller details fetched:", data);
-            })
-            .catch(error => {
-                console.error("Error fetching product details:", error);
-            });
-    }, [id]);
-    useEffect(() => {
+        setLoading(true);
         fetch(`http://localhost:5000/reviews/${id}`)
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(data => {
-                setReviews(data);
-                console.log("Product reviews fetched:", data);
+                console.log("✅ Reviews API Response:", data);
+                
+                // Handle the response structure from your Express server
+                if (data.success && data.reviews) {
+                    setReviews(data.reviews);
+                    setReviewStats(data.stats);
+                    console.log(`✅ Loaded ${data.reviews.length} reviews`);
+                    console.log("✅ Review Stats:", data.stats);
+                } else if (Array.isArray(data)) {
+                    // Fallback if response is just an array
+                    setReviews(data);
+                    console.log(`✅ Loaded ${data.length} reviews (array format)`);
+                } else {
+                    setReviews([]);
+                    setReviewStats(null);
+                    console.log("ℹ️ No reviews found");
+                }
+                setLoading(false);
             })
             .catch(error => {
-                console.error("Error fetching product reviews:", error);
+                console.error("❌ Error fetching reviews:", error);
+                setReviews([]);
+                setReviewStats(null);
+                setLoading(false);
             });
     }, [id]);
+
+    // Render star rating
+    const renderStarRating = (rating) => {
+        const stars = [];
+        const fullStars = Math.floor(rating);
+        const hasHalfStar = rating % 1 >= 0.5;
+
+        for (let i = 0; i < fullStars; i++) {
+            stars.push(
+                <FiStar key={`full-${i}`} className="text-yellow-500 fill-yellow-500" size={20} />
+            );
+        }
+        
+        if (hasHalfStar) {
+            stars.push(
+                <FiStar key="half" className="text-yellow-500 fill-yellow-500" size={20} style={{ opacity: 0.5 }} />
+            );
+        }
+        
+        const emptyStars = 5 - Math.ceil(rating);
+        for (let i = 0; i < emptyStars; i++) {
+            stars.push(
+                <FiStar key={`empty-${i}`} className="text-gray-300" size={20} />
+            );
+        }
+        
+        return stars;
+    };
+
     return (
         <div className='min-h-screen bg-gradient-to-br from-purple-700 via-indigo-800 to-blue-900'>
-            <Navbar  user={user} carts={carts} setCarts={setCarts} />
+            <Navbar/>
             
-            {/* Product Details Section */}
-            <div className='max-w-[1440px] mx-auto px-20 py-16'>
-                <div className='flex flex-col lg:flex-row gap-10 backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl p-8'>
-                    {/* Product Image */}
-                    <div className='flex-shrink-0'>
-                        <img 
-                            src={product[0]?.image} 
-                            alt={product[0]?.title} 
-                            className='rounded-2xl w-full lg:w-[450px] h-auto object-cover shadow-2xl shadow-black/30'
-                        />
-                    </div>
+            {/* Product Details */}
+            <div className='flex gap-10 p-10'>
+                <img 
+                    src={product[0]?.image} 
+                    alt={product[0]?.title} 
+                    className='shadow-2xl rounded-2xl w-[450px] h-[450px] object-cover'
+                />
+                <div className='flex flex-col gap-5 justify-center'>
+                    <h2 className='text-3xl font-bold'>{product[0]?.title}</h2>
+                    <p className='text-xl'>Price: ৳{product[0]?.price}</p>
                     
                     {/* Product Info */}
                     <div className='flex flex-col gap-6 justify-center flex-1'>
@@ -126,84 +159,162 @@ const Productdetails = () => {
                     </div>
                 </div>
 
-                {/* Seller Information Section */}
-                <div className='mt-10 backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl overflow-hidden'>
-                    {/* Header with gradient background */}
-                    <div className='bg-gradient-to-r from-pink-500/20 via-purple-500/20 to-blue-500/20 border-b border-white/20 px-8 py-6'>
-                        <h2 className='text-3xl font-bold text-white mb-4'>Sold By</h2>
-                        <div className='flex items-center gap-4'>
-                            {/* Seller Avatar */}
-                            <div className='w-20 h-20 rounded-2xl bg-gradient-to-br from-pink-500 via-purple-500 to-blue-500 flex items-center justify-center text-white text-2xl font-bold shadow-xl transform hover:scale-105 transition-all duration-200'>
-                                {product[0]?.seller_shop_name?.charAt(0)?.toUpperCase() || 'S'}
-                            </div>
-                            
-                            {/* Seller Name and Badge */}
-                            <div className='flex-1'>
-                                <div className='flex items-center gap-3 mb-1'>
-                                    <h2 className='text-2xl font-bold text-white'>
-                                        {product[0]?.seller_shop_name || 'Official Store'}
-                                    </h2>
-                                    <span className='px-3 py-1 bg-green-500/20 border border-green-400/50 text-green-300 text-xs font-semibold rounded-full'>
-                                        ✓ Verified
-                                    </span>
+            {/* Product Description */}
+            <div className='mx-20 mt-10'>
+                <h1 className='text-2xl font-bold mb-3'>Product Description</h1>
+                <p className='text-lg'>{product[0]?.description}</p>
+            </div>
+
+            {/* Review Statistics */}
+            {reviewStats && reviewStats.total > 0 && (
+                <div className='mx-20 mt-10'>
+                    <div className='bg-gradient-to-r from-green-50 to-red-50 p-6 rounded-2xl border-2 border-gray-200'>
+                        <h2 className='text-2xl font-bold mb-4 text-gray-800'>Review Summary</h2>
+                        <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
+                            {/* Overall Rating */}
+                            <div className='flex flex-col items-center justify-center p-4 bg-white rounded-xl shadow-sm'>
+                                <div className='text-4xl font-bold text-gray-800 mb-2'>
+                                    {reviewStats.overallRating.toFixed(1)}
                                 </div>
-                                <div className='flex items-center gap-2'>
-                                    <div className='flex gap-0.5'>
-                                        {Array.from({ length: 5 }).map((_, index) => (
-                                            <span key={index} className={`text-base ${index < Math.floor(product[0]?.seller_rating || 4.5) ? 'text-yellow-400' : 'text-white/30'}`}>★</span>
-                                        ))}
+                                <div className='flex gap-1 mb-2'>
+                                    {renderStarRating(reviewStats.overallRating)}
+                                </div>
+                                <span className='text-sm text-gray-600'>
+                                    {reviewStats.percentage}% Satisfaction
+                                </span>
+                            </div>
+
+                            {/* Positive Reviews */}
+                            <div className='flex items-center gap-4 p-4 bg-white rounded-xl shadow-sm'>
+                                <div className='w-16 h-16 flex items-center justify-center bg-green-100 rounded-full'>
+                                    <FiThumbsUp className='text-green-600' size={28} />
+                                </div>
+                                <div>
+                                    <div className='text-3xl font-bold text-green-600'>
+                                        {reviewStats.positive}
                                     </div>
-                                    <span className='text-white/70 text-sm'>
-                                        {product[0]?.seller_rating || '4.5'} Rating
-                                    </span>
+                                    <div className='text-sm text-gray-600'>
+                                        Positive Reviews
+                                    </div>
                                 </div>
                             </div>
-                            
-                            {/* Visit Shop Button */}
-                            <button className='px-6 py-3 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-white font-semibold rounded-xl hover:shadow-2xl hover:shadow-pink-500/50 hover:scale-105 transition-all duration-200'>
-                                Visit Shop
-                            </button>
+
+                            {/* Negative Reviews */}
+                            <div className='flex items-center gap-4 p-4 bg-white rounded-xl shadow-sm'>
+                                <div className='w-16 h-16 flex items-center justify-center bg-red-100 rounded-full'>
+                                    <FiThumbsDown className='text-red-600' size={28} />
+                                </div>
+                                <div>
+                                    <div className='text-3xl font-bold text-red-600'>
+                                        {reviewStats.negative}
+                                    </div>
+                                    <div className='text-sm text-gray-600'>
+                                        Negative Reviews
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
+            )}
 
-                {/* Product Description Section */}
-                <div className='mt-10 backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl p-8'>
-                    <h1 className='text-3xl font-bold text-white mb-6'>Product Description</h1>
-                    <p className='text-lg text-white/80 leading-relaxed'>{product[0]?.description}</p>
-                </div>
-
-                {/* Product Reviews Section */}
-                <div className='mt-10 backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl p-8'>
-                    <h1 className='text-3xl font-bold text-white mb-6'>Product Reviews</h1>
+            {/* Product Reviews with Sentiment Analysis */}
+            <div className='mx-20 mt-10 mb-20'>
+                <h1 className='text-2xl font-bold mb-5'>
+                    Customer Reviews ({reviews.length})
+                </h1>
+                
+                {loading ? (
+                    <div className='text-center py-10'>
+                        <div className='inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900'></div>
+                        <p className='mt-4 text-gray-600'>Loading reviews...</p>
+                    </div>
+                ) : reviews.length > 0 ? (
                     <div className='space-y-4'>
-                        {
-                            Array.isArray(reviews) && reviews.length > 0 ? 
-                            reviews.map((review) => (
-                                <div key={review.id} className="p-6 backdrop-blur-sm bg-white/10 border border-white/20 rounded-2xl hover:bg-white/15 transition-all duration-200">
-                                    <div className='flex justify-between items-start mb-3'>
-                                        <div className='flex gap-1'>
-                                            {Array.from({ length: review.number_of_star }).map((_, index) => (
-                                                <span key={index} className="text-yellow-400 text-xl">★</span>
+                        {reviews.map((review) => (
+                            <div 
+                                key={review.id} 
+                                className="p-6 border-2 rounded-xl shadow-sm hover:shadow-md transition-all duration-300"
+                                style={{ 
+                                    borderColor: review.sentiment_color || '#e5e7eb',
+                                    backgroundColor: `${review.sentiment_color}15` 
+                                }}
+                            >
+                                <div className='flex justify-between items-start mb-3'>
+                                    <div className='flex-1'>
+                                        {/* Star Rating */}
+                                        <div className='flex gap-1 mb-2'>
+                                            {Array.from({ length: review.number_of_star || 0 }).map((_, index) => (
+                                                <FiStar 
+                                                    key={`filled-${index}`} 
+                                                    className="text-yellow-500 fill-yellow-500" 
+                                                    size={20}
+                                                />
                                             ))}
-                                            {Array.from({ length: 5-review.number_of_star }).map((_, index) => (
-                                                <span key={index} className="text-white/30 text-xl">★</span>
+                                            {Array.from({ length: 5 - (review.number_of_star || 0) }).map((_, index) => (
+                                                <FiStar 
+                                                    key={`empty-${index}`} 
+                                                    className="text-gray-300" 
+                                                    size={20}
+                                                />
                                             ))}
                                         </div>
-                                        <h3 className="text-white/60 text-sm">{review.date}</h3>
+                                        
+                                        {/* Reviewer and Date */}
+                                        <h3 className="text-lg font-semibold text-gray-800">
+                                            {review.reviewer}
+                                        </h3>
+                                        <p className="text-sm text-gray-500">{review.date}</p>
                                     </div>
-                                    <h3 className="mb-2 text-white/70 font-medium">{review.reviewer}</h3>
-                                    <p className="text-white font-normal">{review.review_description}</p>
+
+                                    {/* Sentiment Badge */}
+                                    {review.sentiment && (
+                                        <div 
+                                            className='px-5 py-3 rounded-xl font-bold text-sm flex items-center gap-3 shadow-md'
+                                            style={{ 
+                                                backgroundColor: review.sentiment_color || '#6b7280',
+                                                color: 'white'
+                                            }}
+                                        >
+                                            <span className='text-2xl'>
+                                                {review.sentiment === 'positive' ? '😊' : '😞'}
+                                            </span>
+                                            <div className='flex flex-col items-start'>
+                                                <span className='text-base'>
+                                                    {review.sentiment.toUpperCase()}
+                                                </span>
+                                                {review.confidence && (
+                                                    <span className='text-xs opacity-90'>
+                                                        {typeof review.confidence === 'number' 
+                                                            ? review.confidence.toFixed(1) 
+                                                            : parseFloat(review.confidence).toFixed(1)}% confident
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
-                            )) : (
-                                <div className='flex flex-col items-center justify-center py-12'>
-                                    <div className="text-6xl mb-4">💬</div>
-                                    <p className='text-white/70 text-lg'>No reviews available for this product.</p>
-                                </div>
-                            )
-                        }
+
+                                {/* Review Text with Sentiment Color */}
+                                <p 
+                                    className='text-lg font-medium leading-relaxed mt-4'
+                                    style={{ 
+                                        color: review.sentiment === 'positive' ? '#059669' : '#dc2626'
+                                    }}
+                                >
+                                    {review.review_description}
+                                </p>
+                            </div>
+                        ))}
                     </div>
-                </div>
+                ) : (
+                    <div className='text-center py-10 bg-gray-50 rounded-xl'>
+                        <div className='text-6xl mb-4'>📝</div>
+                        <p className='text-gray-500 text-lg'>
+                            No reviews yet. Be the first to review this product!
+                        </p>
+                    </div>
+                )}
             </div>
         </div>
     );
