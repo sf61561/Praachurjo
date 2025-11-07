@@ -199,12 +199,6 @@
 
 // export default Login;
 
-
-
-
-
-
-
 import React, { useState, useEffect } from "react";
 import { useNavigate, NavLink } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
@@ -215,6 +209,7 @@ import "react-toastify/dist/ReactToastify.css";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState("customer");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -228,11 +223,11 @@ const Login = () => {
 
     setIsLoading(true);
     try {
-      const response = await fetch("http://localhost:5000/users/login", {
+      const response = await fetch("http://localhost:5000/customers/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, role }),
       });
 
       const data = await response.json();
@@ -240,7 +235,17 @@ const Login = () => {
         toast.error(data.error, { position: "top-center" });
       } else {
         toast.success("Login successful!", { position: "top-center" });
-        setTimeout(() => navigate("/"), 1000);
+        
+        // Navigate based on role
+        setTimeout(() => {
+          if (role === "admin") {
+            navigate("/admin");
+          } else if (role === "seller") {
+            navigate("/seller/dashboard");
+          } else {
+            navigate("/");
+          }
+        }, 1000);
       }
     } catch {
       toast.error("Connection error. Please try again.", { position: "top-center" });
@@ -262,10 +267,10 @@ const Login = () => {
   }, []);
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-purple-800 via-indigo-900 to-black">
+    <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-purple-700 via-indigo-800 to-blue-900">
       {/* Floating gradient rings */}
-      <div className="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full bg-gradient-to-r from-pink-500 to-purple-700 blur-3xl opacity-40 animate-spin-slow"></div>
-      <div className="absolute -bottom-40 -right-40 w-[500px] h-[500px] rounded-full bg-gradient-to-r from-blue-500 to-cyan-400 blur-3xl opacity-30 animate-spin-slow-reverse"></div>
+      <div className="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full bg-gradient-to-r from-purple-500 to-pink-500 blur-3xl opacity-30"></div>
+      <div className="absolute -bottom-40 -right-40 w-[500px] h-[500px] rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 blur-3xl opacity-30"></div>
 
       {/* Stars animation */}
       {stars.map((s, i) => (
@@ -291,8 +296,8 @@ const Login = () => {
       <motion.div
         initial={{ opacity: 0, y: 50, scale: 0.9 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 1, ease: "easeOut" }}
-        className="relative z-10 backdrop-blur-2xl bg-white/10 border border-white/20 p-8 rounded-3xl shadow-2xl w-[90%] sm:w-[420px]"
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="relative z-10 backdrop-blur-xl bg-white/10 border border-white/20 p-8 rounded-3xl shadow-2xl w-[90%] sm:w-[450px]"
       >
         {/* Header */}
         <motion.div
@@ -301,45 +306,101 @@ const Login = () => {
           transition={{ delay: 0.2 }}
           className="text-center mb-8"
         >
-          <motion.img
-            src="https://i.ibb.co.com/q32M64SH/Praachurjo-Logo-removebg-preview.png"
-            alt="Logo"
-            className="mx-auto w-20 mb-3"
-            animate={{ rotate: [0, 360] }}
-            transition={{ repeat: Infinity, duration: 20, ease: "linear" }}
-          />
-          <h1 className="text-3xl font-extrabold text-white tracking-wide">
+          <NavLink to="/">
+            <motion.img
+              src="https://i.ibb.co.com/q32M64SH/Praachurjo-Logo-removebg-preview.png"
+              alt="Logo"
+              className="mx-auto w-40 mb-4"
+              whileHover={{ scale: 1.05, rotate: 5 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            />
+          </NavLink>
+          <h1 className="text-4xl font-extrabold text-white tracking-wide">
             Welcome Back
           </h1>
-          <p className="text-gray-300 text-sm">Log in to your universe</p>
+          <p className="text-purple-200 text-sm mt-2">Log in to your universe</p>
         </motion.div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <motion.div whileHover={{ scale: 1.03 }}>
-            <label className="text-gray-300 font-semibold">Email</label>
+        <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Role Selection */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            <label className="text-white font-medium text-sm mb-2 block">Login As</label>
+            <div className="grid grid-cols-3 gap-2">
+              <button
+                type="button"
+                onClick={() => setRole("customer")}
+                className={`py-2.5 px-3 rounded-xl font-semibold transition-all duration-150 ${
+                  role === "customer"
+                    ? "bg-gradient-to-r from-pink-500 to-purple-500 text-white shadow-lg scale-105"
+                    : "bg-white/10 backdrop-blur-sm border border-white/20 text-white/70 hover:bg-white/20"
+                }`}
+              >
+                Customer
+              </button>
+              <button
+                type="button"
+                onClick={() => setRole("seller")}
+                className={`py-2.5 px-3 rounded-xl font-semibold transition-all duration-150 ${
+                  role === "seller"
+                    ? "bg-gradient-to-r from-pink-500 to-purple-500 text-white shadow-lg scale-105"
+                    : "bg-white/10 backdrop-blur-sm border border-white/20 text-white/70 hover:bg-white/20"
+                }`}
+              >
+                Seller
+              </button>
+              <button
+                type="button"
+                onClick={() => setRole("admin")}
+                className={`py-2.5 px-3 rounded-xl font-semibold transition-all duration-150 ${
+                  role === "admin"
+                    ? "bg-gradient-to-r from-pink-500 to-purple-500 text-white shadow-lg scale-105"
+                    : "bg-white/10 backdrop-blur-sm border border-white/20 text-white/70 hover:bg-white/20"
+                }`}
+              >
+                Admin
+              </button>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.4 }}
+          >
+            <label className="text-white font-medium text-sm mb-2 block">Email</label>
             <input
               type="email"
-              className="mt-1 w-full px-4 py-3 rounded-xl bg-white/10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-400 shadow-inner"
+              className="w-full px-4 py-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-purple-300 focus:outline-none focus:border-pink-400 focus:bg-white/20 transition-all"
               placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              required
             />
           </motion.div>
 
-          <motion.div whileHover={{ scale: 1.03 }}>
-            <label className="text-gray-300 font-semibold">Password</label>
-            <div className="relative mt-1">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.5 }}
+          >
+            <label className="text-white font-medium text-sm mb-2 block">Password</label>
+            <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
-                className="w-full px-4 py-3 rounded-xl bg-white/10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-400 shadow-inner"
+                className="w-full px-4 py-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-purple-300 focus:outline-none focus:border-pink-400 focus:bg-white/20 transition-all"
                 placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                required
               />
               <button
                 type="button"
-                className="absolute right-4 top-3 text-gray-300 hover:text-white transition"
+                className="absolute right-4 top-3.5 text-purple-200 hover:text-white transition"
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? <IoEyeOffOutline size={20} /> : <IoEyeOutline size={20} />}
@@ -348,28 +409,47 @@ const Login = () => {
           </motion.div>
 
           {/* Remember / Forgot */}
-          <div className="flex justify-between text-sm text-gray-300">
-            <label className="flex items-center gap-2">
-              <input type="checkbox" className="checkbox checkbox-xs checkbox-pink-500" />
-              Remember me
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6 }}
+            className="flex justify-between items-center text-sm text-purple-200"
+          >
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" className="w-4 h-4 accent-pink-500 rounded" />
+              <span>Remember me</span>
             </label>
-            <NavLink to="/forgot-password" className="hover:underline hover:text-white">
+            <NavLink to="/forgot-password" className="text-purple-200 hover:text-white transition">
               Forgot password?
             </NavLink>
-          </div>
+          </motion.div>
 
           {/* Submit Button */}
           <motion.button
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0, transition: { delay: 0.7 } }}
             whileHover={{
-              scale: 1.05,
-              boxShadow: "0px 0px 20px rgba(255, 100, 200, 0.8)",
+              scale: 1.02,
+              boxShadow: "0px 10px 30px rgba(236, 72, 153, 0.5)",
+              transition: { duration: 0.15 }
             }}
-            whileTap={{ scale: 0.97 }}
+            whileTap={{ scale: 0.98, transition: { duration: 0.1 } }}
+            transition={{ duration: 0.15 }}
             type="submit"
             disabled={isLoading}
-            className="w-full py-3 rounded-xl bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-600 text-white font-bold uppercase tracking-wider transition-all shadow-lg"
+            className="w-full py-3.5 rounded-xl bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-white font-bold uppercase tracking-wider transition-all shadow-lg cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
           >
-            {isLoading ? "Logging in..." : "Log In"}
+            {isLoading ? (
+              <span className="flex items-center justify-center gap-2">
+                <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Logging in...
+              </span>
+            ) : (
+              "LOG IN"
+            )}
           </motion.button>
         </form>
 
@@ -377,11 +457,11 @@ const Login = () => {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="text-center mt-6 text-gray-300"
+          transition={{ delay: 0.8 }}
+          className="text-center mt-6 text-purple-200"
         >
           <span>New here? </span>
-          <NavLink to="/signup" className="text-pink-400 hover:underline">
+          <NavLink to="/signup" className="text-pink-400 hover:text-pink-300 font-bold transition">
             Create Account
           </NavLink>
         </motion.div>

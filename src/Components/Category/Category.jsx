@@ -57,25 +57,24 @@ const Category = ({ category, user, index }) => {
     return (
         <Link
             to={user ? `/products/category/${category.name}` : '/login'}
-            className="category-card"
+            className="relative flex flex-col items-center justify-center gap-4 p-6 min-h-[200px] backdrop-blur-xl bg-white/10 border-2 border-white/20 rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 hover:border-pink-400 hover:shadow-[0_12px_28px_rgba(236,72,153,0.25)] hover:-translate-y-2 hover:bg-white/15 focus:outline-none focus-visible:ring-4 focus-visible:ring-pink-400/30 active:-translate-y-1 group"
             role="listitem"
             aria-label={`${category.name} category, ${category.count || 0} items available`}
             onClick={handleClick}
             onKeyDown={handleKeyDown}
-            style={{ animationDelay: `${index * 0.05}s` }}
             tabIndex={0}
         >
             {/* Icon Container with Gradient Background */}
-            <div className="category-icon-container" aria-hidden="true">
+            <div className="flex items-center justify-center w-20 h-20 bg-gradient-to-br from-pink-500/20 to-purple-600/20 rounded-2xl backdrop-blur-sm border border-white/20 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6" aria-hidden="true">
                 {imageError ? (
-                    <div className="category-icon-fallback">
+                    <div className="text-3xl font-bold text-white">
                         {category.name.charAt(0).toUpperCase()}
                     </div>
                 ) : (
                     <img
                         src={category.image}
                         alt=""
-                        className="category-icon"
+                        className="w-12 h-12 object-contain filter brightness-0 invert transition-transform duration-300"
                         onError={handleImageError}
                         loading="lazy"
                     />
@@ -83,10 +82,10 @@ const Category = ({ category, user, index }) => {
             </div>
 
             {/* Content */}
-            <div className="category-content">
-                <h3 className="category-name">{category.name}</h3>
+            <div className="flex flex-col items-center gap-2 text-center">
+                <h3 className="text-lg font-bold text-white transition-colors duration-300 group-hover:text-pink-300">{category.name}</h3>
                 {category.count !== undefined && (
-                    <div className="category-count">
+                    <div className="text-sm text-white/60 font-medium">
                         <span aria-label={`${category.count} items`}>
                             {formatCount(category.count)} items
                         </span>
@@ -95,12 +94,12 @@ const Category = ({ category, user, index }) => {
             </div>
 
             {/* Arrow Icon (shows on hover) */}
-            <div className="category-arrow" aria-hidden="true">
+            <div className="absolute bottom-6 right-6 opacity-0 -translate-x-2 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0 text-pink-300 text-xl" aria-hidden="true">
                 <FiArrowRight />
             </div>
 
             {/* Hover Overlay */}
-            <div className="category-overlay" aria-hidden="true"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-pink-500/10 to-purple-600/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100 pointer-events-none" aria-hidden="true"></div>
         </Link>
     );
 };

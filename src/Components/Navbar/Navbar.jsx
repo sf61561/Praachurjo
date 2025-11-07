@@ -21,33 +21,44 @@ const Navbar = ({ user }) => {
       .catch(error => console.error("Error:", error));
   }
   return (
-    <div className="flex items-center justify-between h-[80px] shadow-sm">
+    <div className="flex items-center justify-between h-[80px] px-6 border-b border-white/10">
       <NavLink to={"/"}><img
-        className="w-[150px]"
+        className="w-[150px] brightness-0 invert"
         src="https://i.ibb.co.com/q32M64SH/Praachurjo-Logo-removebg-preview.png"
         alt="Jkkniu-Mart"
       /></NavLink>
       <div className={`flex items-center gap-5  ${user && "ml-20"}`}>
         <div className="flex items-center">
-          <input type="text" name="search" id="search" placeholder="Search..." className={`border-2 border-solid border-[#2fa95b] focus:border-[#2fa95b] focus:outline-none text-black p-5 w-70 h-5 rounded-l-xl`} onChange={(e) => setSearch(e.target.value)} />
-          <button className="btn h-11 bg-[#2fa95b] border-0 rounded-r-xl" onClick={(e) => handleSearchSubmit(e)}><CiSearch className="text-white" /></button>
+          <input 
+            type="text" 
+            name="search" 
+            id="search" 
+            placeholder="Search..." 
+            className="backdrop-blur-sm bg-white/20 border border-white/30 focus:border-pink-400 focus:bg-white/30 focus:outline-none text-white placeholder-purple-200 px-4 py-2 w-70 rounded-l-xl transition-all" 
+            onChange={(e) => setSearch(e.target.value)} 
+          />
+          <button className="h-10 px-4 bg-gradient-to-r from-pink-500 to-purple-500 border-0 rounded-r-xl hover:from-pink-600 hover:to-purple-600 transition-all" onClick={(e) => handleSearchSubmit(e)}>
+            <CiSearch className="text-white text-xl" />
+          </button>
         </div>
         <NavLink to={`/${user ? `${user}/cart` : 'login'}`}>
-          <button className="btn bg-white border-0 shadow-none"><IoCartOutline className="text-[#2fa95b] text-2xl" /></button>
+          <button className="p-2 bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl hover:bg-white/30 transition-all">
+            <IoCartOutline className="text-white text-2xl" />
+          </button>
         </NavLink>
       </div>
-      <div className={`flex gap-10 mr-20 ${user ? 'hidden' : ''}`}>
-        <NavLink className="text-[#2fa95b] font-bold" to="/login">
+      <div className={`flex gap-8 mr-20 ${user ? 'hidden' : ''}`}>
+        <NavLink className="text-white font-bold hover:text-pink-300 transition-colors" to="/login">
           Log In
         </NavLink>
-        <NavLink className="text-[#2fa95b] font-bold" to="/signup">
+        <NavLink className="text-white font-bold hover:text-pink-300 transition-colors" to="/signup">
           Sign Up
         </NavLink>
       </div>
-      <div className={`flex items-center gap-10 mr-20 ${user ? '' : 'hidden'}`}>
-        <NavLink className={`text-[#2fa95b] font-bold`} to={`/${user}/track`}>Track Order</NavLink>
-        <span className={`text-[#2fa95b] font-bold ${user ? '' : 'hidden'}`}>{user}</span>
-        <button className={`btn text-black bg-white border-0 shadow-none ${user ? '' : 'hidden'}`} onClick={handleLogout}>Log Out</button>
+      <div className={`flex items-center gap-8 mr-20 ${user ? '' : 'hidden'}`}>
+        <NavLink className="text-white font-bold hover:text-pink-300 transition-colors" to={`/${user}/track`}>Track Order</NavLink>
+        <span className={`text-white font-bold ${user ? '' : 'hidden'}`}>{user}</span>
+        <button className="px-4 py-2 text-white bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl hover:bg-white/30 transition-all font-semibold" onClick={handleLogout}>Log Out</button>
       </div>
     </div>
   );

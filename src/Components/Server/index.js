@@ -33,23 +33,23 @@ app.get('/logout', (req, res) => {
     });
 });
 
-app.post("/users/signup", (req, res) => {
-    const { fname, lname, username, phone, email, password } = req.body;
-    if (!username || !password) {
-        return res.status(400).json({ error: "Username and password required" });
+app.post("/customers/signup", (req, res) => {
+    const { fname, username, email, password, phone, address } = req.body;
+    if (!email || !password) {
+        return res.status(400).json({ error: "Email and password required" });
     }
-    const sql = "INSERT INTO users (first_name, last_name, username, phone_number, email, password) VALUES (?, ?, ?, ?, ?, ?)";
-    con.query(sql, [fname, lname, username, phone, email, password], (err, result) => {
+    const sql = "INSERT INTO customers (full_name, username, address, phone_number, email, password) VALUES (?, ?, ?, ?, ?, ?)";
+    con.query(sql, [fname, username, address, phone, email, password], (err, result) => {
         if (err) return res.status(500).json({ error: err.message });
         res.json({ message: "User added successfully", id: result.insertId });
     });
 });
 
-app.post("/users/login", (req, res) => {
+app.post("/customers/login", (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) return res.status(400).json({ error: "Email and password required" });
 
-    const sql = "SELECT username FROM users WHERE email = ? AND password = ?";
+    const sql = "SELECT username FROM customers WHERE email = ? AND password = ?";
     con.query(sql, [email, password], (err, results) => {
         if (err) return res.status(500).json({ error: err.message });
         if (results.length === 0){
@@ -95,11 +95,10 @@ app.get("/products/:id",(req,res) => {
         res.json(results);
     });
 })
-
-app.get("/reviews/:id",(req,res) => {
+app.get("/products/:id/seller",(req,res) => {
     const id = parseInt(req.params.id);
-    const sql = "SELECT * FROM reviews WHERE product_id = ?";
-    con.query(sql, [id], (err, results) => {
+    const sql = `select * from products INNER JOIN stores ON products.id=${id} AND products.store_id=stores.store_id;`;
+    con.query(sql, (err, results) => {
         if (err) return res.status(500).json({ error: err.message });
         if (results.length === 0){
             return res.status(401).json({ error: "No Products Found" });
@@ -108,6 +107,58 @@ app.get("/reviews/:id",(req,res) => {
         res.json(results);
     });
 })
+
+app.get("/reviews/:id", (req, res) => {
+    const id = parseInt(req.params.id);
+    const sql = `
+        SELECT id, product_id, reviewer, review_description, 
+               number_of_star, date, sentiment, confidence, 
+               sentiment_color, text_color
+        FROM reviews 
+        WHERE product_id = ?
+        ORDER BY date DESC
+    `;
+    con.query(sql, [id], (err, results) => {
+        if (err) return res.status(500).json({ error: err.message });
+        
+        if (results.length === 0) {
+            return res.json({ 
+                success: true,
+                message: "No reviews found", 
+                reviews: [],
+                stats: {
+                    total: 0,
+                    positive: 0,
+                    negative: 0,
+                    overallRating: 0,
+                    percentage: 0
+                }
+            });
+        }
+        
+        // Calculate overall statistics
+        const positive = results.filter(r => r.sentiment === 'positive').length;
+        const negative = results.filter(r => r.sentiment === 'negative').length;
+        const total = results.length;
+        const percentage = total > 0 ? (positive / total) * 100 : 0;
+        
+        // Convert percentage to 1-5 rating scale
+        const overallRating = Math.round((percentage / 100) * 5 * 10) / 10; // Round to 1 decimal
+        
+        res.json({
+            success: true,
+            message: `Found ${total} reviews`,
+            reviews: results,
+            stats: {
+                total: total,
+                positive: positive,
+                negative: negative,
+                overallRating: overallRating,
+                percentage: Math.round(percentage)
+            }
+        });
+    });
+});
 
 app.post("/update", (req, res) => {
     const { status ,id } = req.body;
@@ -163,6 +214,19 @@ app.get("/:user/track",(req,res) => {
         res.json(results);
     });
 })
+
+app.post("/review/:id/add", (req, res) => {
+    const productId = parseInt(req.params.id);
+    const {  user, star, review, date } = req.body;
+    if (!user || !star || !review || !date) {
+        return res.status(400).json({ error: "User, star, review, and date are required" });
+    }
+    const sql = "INSERT INTO reviews (product_id, reviewer, number_of_star, review_description, date) VALUES (?, ?, ?, ?, ?)";
+    con.query(sql, [productId, user, star, review, date], (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ message: "Review added successfully" });
+    });
+});
 
 app.post("/cart/add", (req, res) => {
     const { user, cart, cartCounts } = req.body;
