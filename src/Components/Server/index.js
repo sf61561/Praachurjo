@@ -33,23 +33,23 @@ app.get('/logout', (req, res) => {
     });
 });
 
-app.post("/users/signup", (req, res) => {
-    const { fname, lname, username, phone, email, password } = req.body;
-    if (!username || !password) {
-        return res.status(400).json({ error: "Username and password required" });
+app.post("/customers/signup", (req, res) => {
+    const { fname, username, email, password, phone, address } = req.body;
+    if (!email || !password) {
+        return res.status(400).json({ error: "Email and password required" });
     }
-    const sql = "INSERT INTO users (first_name, last_name, username, phone_number, email, password) VALUES (?, ?, ?, ?, ?, ?)";
-    con.query(sql, [fname, lname, username, phone, email, password], (err, result) => {
+    const sql = "INSERT INTO customers (full_name, username, address, phone_number, email, password) VALUES (?, ?, ?, ?, ?, ?)";
+    con.query(sql, [fname, username, address, phone, email, password], (err, result) => {
         if (err) return res.status(500).json({ error: err.message });
         res.json({ message: "User added successfully", id: result.insertId });
     });
 });
 
-app.post("/users/login", (req, res) => {
+app.post("/customers/login", (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) return res.status(400).json({ error: "Email and password required" });
 
-    const sql = "SELECT username FROM users WHERE email = ? AND password = ?";
+    const sql = "SELECT username FROM customers WHERE email = ? AND password = ?";
     con.query(sql, [email, password], (err, results) => {
         if (err) return res.status(500).json({ error: err.message });
         if (results.length === 0){

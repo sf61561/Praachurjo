@@ -119,11 +119,11 @@ import "react-toastify/dist/ReactToastify.css";
 const Signup = () => {
   const navigate = useNavigate();
   const [fname, setfname] = useState("");
+  const [username, setusername] = useState("");
   const [phone, setphone] = useState("");
   const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
   const [address, setaddress] = useState("");
-  const [country, setcountry] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -138,10 +138,10 @@ const Signup = () => {
     setIsLoading(true);
     
     try {
-      const response = await fetch("http://localhost:5000/users/signup", {
+      const response = await fetch("http://localhost:5000/customers/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ fname, phone, email, password })
+        body: JSON.stringify({ fname, username, email, password, phone, address })
       });
       
       const data = await response.json();
@@ -232,10 +232,12 @@ const Signup = () => {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-3">
+          
+
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.3 }}
+            transition={{ delay: 0.35 }}
           >
             <label className="text-white font-medium text-xs mb-1 block">Full Name</label>
             <input
@@ -253,6 +255,22 @@ const Signup = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.35 }}
           >
+            <label className="text-white font-medium text-xs mb-1 block">Username</label>
+            <input
+              type="text"
+              className="w-full px-4 py-2.5 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-purple-300 focus:outline-none focus:border-pink-400 focus:bg-white/20 transition-all text-sm"
+              placeholder="Enter your username"
+              value={username}
+              onChange={(e) => setusername(e.target.value)}
+              required
+            />
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.4 }}
+          >
             <label className="text-white font-medium text-xs mb-1 block">Email</label>
             <input
               type="email"
@@ -267,7 +285,7 @@ const Signup = () => {
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.4 }}
+            transition={{ delay: 0.45 }}
           >
             <label className="text-white font-medium text-xs mb-1 block">Password</label>
             <div className="relative">
@@ -306,24 +324,6 @@ const Signup = () => {
               onChange={(e) => setphone(e.target.value)}
               required
             />
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.5 }}
-          >
-            <label className="text-white font-medium text-xs mb-1 block">Country</label>
-            <select 
-              className="w-full px-4 py-2.5 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white focus:outline-none focus:border-pink-400 focus:bg-white/20 transition-all text-sm"
-              value={country}
-              onChange={(e) => setcountry(e.target.value)}
-            >
-              <option value="" className="bg-purple-900">Select a country</option>
-              <option value="Bangladesh" className="bg-purple-900">Bangladesh</option>
-              <option value="India" className="bg-purple-900">India</option>
-              <option value="Pakistan" className="bg-purple-900">Pakistan</option>
-            </select>
           </motion.div>
 
           <motion.div
