@@ -3,6 +3,7 @@ import Navbar from '../Navbar/Navbar';
 import Slider from '../Slider/Slider';
 import Categories from '../Categories/Categories';
 import Justforyou from '../Justforyou/Justforyou';
+import Footer from '../Footer/Footer';
 
 const Root = () => {
     const [user, setUser] = React.useState(null); 
@@ -18,7 +19,8 @@ const Root = () => {
             <Navbar user={user} carts={carts} setCarts={setCarts} />
             <Slider />
             <Categories />
-            <Justforyou />   
+            <Justforyou />
+            <Footer />
         </div>
     );
 };
