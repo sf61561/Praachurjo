@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FiCheck, FiShoppingCart } from 'react-icons/fi';
+import { FiCheck, FiShoppingCart, FiStar, FiThumbsUp, FiThumbsDown } from 'react-icons/fi';
 import { useParams } from 'react-router-dom';
 import Navbar from '../Navbar/Navbar';
 
@@ -11,6 +11,7 @@ const Productdetails = () => {
     const [quantity, setQuantity] = useState(0);
     const [isAdding] = useState(false);
     const [isAdded] = useState(false);
+    const [loading, setLoading] = useState(false);
     console.log(id);
     useEffect(() => {
         fetch(`http://localhost:5000/products/${id}`)
@@ -92,16 +93,17 @@ const Productdetails = () => {
         <div className='min-h-screen bg-gradient-to-br from-purple-700 via-indigo-800 to-blue-900'>
             <Navbar/>
             
-            {/* Product Details */}
-            <div className='flex gap-10 p-10'>
-                <img 
-                    src={product[0]?.image} 
-                    alt={product[0]?.title} 
-                    className='shadow-2xl rounded-2xl w-[450px] h-[450px] object-cover'
-                />
-                <div className='flex flex-col gap-5 justify-center'>
-                    <h2 className='text-3xl font-bold'>{product[0]?.title}</h2>
-                    <p className='text-xl'>Price: ৳{product[0]?.price}</p>
+            {/* Product Details Section */}
+            <div className='max-w-[1440px] mx-auto px-6 md:px-20 py-16'>
+                <div className='flex flex-col lg:flex-row gap-10 backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl p-8'>
+                    {/* Product Image */}
+                    <div className='flex-shrink-0'>
+                        <img 
+                            src={product[0]?.image} 
+                            alt={product[0]?.title} 
+                            className='rounded-2xl w-full lg:w-[450px] h-auto object-cover shadow-2xl shadow-black/30'
+                        />
+                    </div>
                     
                     {/* Product Info */}
                     <div className='flex flex-col gap-6 justify-center flex-1'>
@@ -159,86 +161,80 @@ const Productdetails = () => {
                     </div>
                 </div>
 
-            {/* Product Description */}
-            <div className='mx-20 mt-10'>
-                <h1 className='text-2xl font-bold mb-3'>Product Description</h1>
-                <p className='text-lg'>{product[0]?.description}</p>
-            </div>
+                {/* Product Description */}
+                <div className='mt-10 backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl p-8'>
+                    <h1 className='text-3xl font-bold text-white mb-6'>Product Description</h1>
+                    <p className='text-lg text-white/80 leading-relaxed'>{product[0]?.description}</p>
+                </div>
 
-            {/* Review Statistics */}
-            {reviewStats && reviewStats.total > 0 && (
-                <div className='mx-20 mt-10'>
-                    <div className='bg-gradient-to-r from-green-50 to-red-50 p-6 rounded-2xl border-2 border-gray-200'>
-                        <h2 className='text-2xl font-bold mb-4 text-gray-800'>Review Summary</h2>
+                {/* Review Statistics */}
+                {reviewStats && reviewStats.total > 0 && (
+                    <div className='mt-10 backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl p-8'>
+                        <h2 className='text-3xl font-bold text-white mb-6'>Review Summary</h2>
                         <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
                             {/* Overall Rating */}
-                            <div className='flex flex-col items-center justify-center p-4 bg-white rounded-xl shadow-sm'>
-                                <div className='text-4xl font-bold text-gray-800 mb-2'>
+                            <div className='flex flex-col items-center justify-center p-6 backdrop-blur-sm bg-white/10 border border-white/20 rounded-2xl'>
+                                <div className='text-5xl font-bold text-white mb-2'>
                                     {reviewStats.overallRating.toFixed(1)}
                                 </div>
                                 <div className='flex gap-1 mb-2'>
                                     {renderStarRating(reviewStats.overallRating)}
                                 </div>
-                                <span className='text-sm text-gray-600'>
+                                <span className='text-sm text-white/70'>
                                     {reviewStats.percentage}% Satisfaction
                                 </span>
                             </div>
 
                             {/* Positive Reviews */}
-                            <div className='flex items-center gap-4 p-4 bg-white rounded-xl shadow-sm'>
-                                <div className='w-16 h-16 flex items-center justify-center bg-green-100 rounded-full'>
-                                    <FiThumbsUp className='text-green-600' size={28} />
+                            <div className='flex items-center gap-4 p-6 backdrop-blur-sm bg-white/10 border border-white/20 rounded-2xl'>
+                                <div className='w-16 h-16 flex items-center justify-center bg-green-500/20 rounded-full'>
+                                    <FiThumbsUp className='text-green-400' size={28} />
                                 </div>
                                 <div>
-                                    <div className='text-3xl font-bold text-green-600'>
+                                    <div className='text-4xl font-bold text-green-400'>
                                         {reviewStats.positive}
                                     </div>
-                                    <div className='text-sm text-gray-600'>
+                                    <div className='text-sm text-white/70'>
                                         Positive Reviews
                                     </div>
                                 </div>
                             </div>
 
                             {/* Negative Reviews */}
-                            <div className='flex items-center gap-4 p-4 bg-white rounded-xl shadow-sm'>
-                                <div className='w-16 h-16 flex items-center justify-center bg-red-100 rounded-full'>
-                                    <FiThumbsDown className='text-red-600' size={28} />
+                            <div className='flex items-center gap-4 p-6 backdrop-blur-sm bg-white/10 border border-white/20 rounded-2xl'>
+                                <div className='w-16 h-16 flex items-center justify-center bg-red-500/20 rounded-full'>
+                                    <FiThumbsDown className='text-red-400' size={28} />
                                 </div>
                                 <div>
-                                    <div className='text-3xl font-bold text-red-600'>
+                                    <div className='text-4xl font-bold text-red-400'>
                                         {reviewStats.negative}
                                     </div>
-                                    <div className='text-sm text-gray-600'>
+                                    <div className='text-sm text-white/70'>
                                         Negative Reviews
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            )}
+                )}
 
-            {/* Product Reviews with Sentiment Analysis */}
-            <div className='mx-20 mt-10 mb-20'>
-                <h1 className='text-2xl font-bold mb-5'>
+                {/* Product Reviews with Sentiment Analysis */}
+                <div className='mt-10 mb-20 backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl p-8'>
+                <h1 className='text-3xl font-bold text-white mb-6'>
                     Customer Reviews ({reviews.length})
                 </h1>
                 
                 {loading ? (
                     <div className='text-center py-10'>
-                        <div className='inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900'></div>
-                        <p className='mt-4 text-gray-600'>Loading reviews...</p>
+                        <div className='inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-pink-400'></div>
+                        <p className='mt-4 text-white/70'>Loading reviews...</p>
                     </div>
                 ) : reviews.length > 0 ? (
                     <div className='space-y-4'>
                         {reviews.map((review) => (
                             <div 
                                 key={review.id} 
-                                className="p-6 border-2 rounded-xl shadow-sm hover:shadow-md transition-all duration-300"
-                                style={{ 
-                                    borderColor: review.sentiment_color || '#e5e7eb',
-                                    backgroundColor: `${review.sentiment_color}15` 
-                                }}
+                                className="p-6 backdrop-blur-sm bg-white/10 border border-white/20 rounded-2xl hover:bg-white/15 transition-all duration-200"
                             >
                                 <div className='flex justify-between items-start mb-3'>
                                     <div className='flex-1'>
@@ -297,10 +293,9 @@ const Productdetails = () => {
 
                                 {/* Review Text with Sentiment Color */}
                                 <p 
-                                    className='text-lg font-medium leading-relaxed mt-4'
-                                    style={{ 
-                                        color: review.sentiment === 'positive' ? '#059669' : '#dc2626'
-                                    }}
+                                    className={`text-lg font-medium leading-relaxed mt-4 ${
+                                        review.sentiment === 'positive' ? 'text-green-300' : 'text-red-300'
+                                    }`}
                                 >
                                     {review.review_description}
                                 </p>
@@ -308,13 +303,14 @@ const Productdetails = () => {
                         ))}
                     </div>
                 ) : (
-                    <div className='text-center py-10 bg-gray-50 rounded-xl'>
-                        <div className='text-6xl mb-4'>📝</div>
-                        <p className='text-gray-500 text-lg'>
+                    <div className='text-center py-12 backdrop-blur-sm bg-white/5 rounded-2xl'>
+                        <div className='text-6xl mb-4'>💬</div>
+                        <p className='text-white/70 text-lg'>
                             No reviews yet. Be the first to review this product!
                         </p>
                     </div>
                 )}
+                </div>
             </div>
         </div>
     );

@@ -5,7 +5,7 @@ export const connection = () => {
         let con = mysql.createConnection({
         host: "localhost",
         user: "root",
-        password: "Tuhin@2025",
+        password: "",
         database: "jkkniu-mart"
     });
     return con;
