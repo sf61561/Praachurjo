@@ -209,6 +209,7 @@ import "react-toastify/dist/ReactToastify.css";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState("customer");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -222,11 +223,11 @@ const Login = () => {
 
     setIsLoading(true);
     try {
-      const response = await fetch("http://localhost:5000/users/login", {
+      const response = await fetch("http://localhost:5000/customers/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, role }),
       });
 
       const data = await response.json();
@@ -234,7 +235,17 @@ const Login = () => {
         toast.error(data.error, { position: "top-center" });
       } else {
         toast.success("Login successful!", { position: "top-center" });
-        setTimeout(() => navigate("/"), 1000);
+        
+        // Navigate based on role
+        setTimeout(() => {
+          if (role === "admin") {
+            navigate("/admin");
+          } else if (role === "seller") {
+            navigate("/seller/dashboard");
+          } else {
+            navigate("/");
+          }
+        }, 1000);
       }
     } catch {
       toast.error("Connection error. Please try again.", { position: "top-center" });
@@ -312,10 +323,54 @@ const Login = () => {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Role Selection */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3 }}
+          >
+            <label className="text-white font-medium text-sm mb-2 block">Login As</label>
+            <div className="grid grid-cols-3 gap-2">
+              <button
+                type="button"
+                onClick={() => setRole("customer")}
+                className={`py-2.5 px-3 rounded-xl font-semibold transition-all duration-150 ${
+                  role === "customer"
+                    ? "bg-gradient-to-r from-pink-500 to-purple-500 text-white shadow-lg scale-105"
+                    : "bg-white/10 backdrop-blur-sm border border-white/20 text-white/70 hover:bg-white/20"
+                }`}
+              >
+                Customer
+              </button>
+              <button
+                type="button"
+                onClick={() => setRole("seller")}
+                className={`py-2.5 px-3 rounded-xl font-semibold transition-all duration-150 ${
+                  role === "seller"
+                    ? "bg-gradient-to-r from-pink-500 to-purple-500 text-white shadow-lg scale-105"
+                    : "bg-white/10 backdrop-blur-sm border border-white/20 text-white/70 hover:bg-white/20"
+                }`}
+              >
+                Seller
+              </button>
+              <button
+                type="button"
+                onClick={() => setRole("admin")}
+                className={`py-2.5 px-3 rounded-xl font-semibold transition-all duration-150 ${
+                  role === "admin"
+                    ? "bg-gradient-to-r from-pink-500 to-purple-500 text-white shadow-lg scale-105"
+                    : "bg-white/10 backdrop-blur-sm border border-white/20 text-white/70 hover:bg-white/20"
+                }`}
+              >
+                Admin
+              </button>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.4 }}
           >
             <label className="text-white font-medium text-sm mb-2 block">Email</label>
             <input
@@ -331,7 +386,7 @@ const Login = () => {
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.4 }}
+            transition={{ delay: 0.5 }}
           >
             <label className="text-white font-medium text-sm mb-2 block">Password</label>
             <div className="relative">
@@ -357,7 +412,7 @@ const Login = () => {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
+            transition={{ delay: 0.6 }}
             className="flex justify-between items-center text-sm text-purple-200"
           >
             <label className="flex items-center gap-2 cursor-pointer">
@@ -372,7 +427,7 @@ const Login = () => {
           {/* Submit Button */}
           <motion.button
             initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0, transition: { delay: 0.6 } }}
+            animate={{ opacity: 1, y: 0, transition: { delay: 0.7 } }}
             whileHover={{
               scale: 1.02,
               boxShadow: "0px 10px 30px rgba(236, 72, 153, 0.5)",
@@ -402,7 +457,7 @@ const Login = () => {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.7 }}
+          transition={{ delay: 0.8 }}
           className="text-center mt-6 text-purple-200"
         >
           <span>New here? </span>

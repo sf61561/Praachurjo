@@ -109,7 +109,7 @@ const Justforyoucard = ({ product, index }) => {
     >
       {/* Image Container */}
       <Link
-        to={`/product/${product.id}`}
+        to={`/products/${product.id}`}
         className="relative block w-full aspect-square overflow-hidden bg-white/5"
         aria-label={`View details for ${product.title}`}
       >
@@ -167,7 +167,7 @@ const Justforyoucard = ({ product, index }) => {
         )}
 
         {/* Title */}
-        <Link to={`/product/${product.id}`}>
+        <Link to={`/products/${product.id}`}>
           <h3 className="text-lg font-bold text-white line-clamp-2 hover:text-pink-300 transition-colors duration-200" title={product.title}>
             {product.title}
           </h3>
