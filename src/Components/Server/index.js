@@ -95,6 +95,18 @@ app.get("/products/:id",(req,res) => {
         res.json(results);
     });
 })
+app.get("/products/:id/seller",(req,res) => {
+    const id = parseInt(req.params.id);
+    const sql = `select * from products INNER JOIN stores ON products.id=${id} AND products.store_id=stores.store_id;`;
+    con.query(sql, (err, results) => {
+        if (err) return res.status(500).json({ error: err.message });
+        if (results.length === 0){
+            return res.status(401).json({ error: "No Products Found" });
+        }
+        console.log(id)
+        res.json(results);
+    });
+})
 
 app.get("/reviews/:id",(req,res) => {
     const id = parseInt(req.params.id);

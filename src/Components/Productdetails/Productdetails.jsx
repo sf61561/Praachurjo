@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FiCheck, FiShoppingCart } from 'react-icons/fi';
+import { FiCheck, FiShoppingCart, FiMapPin, FiPhone, FiMail } from 'react-icons/fi';
 import { useParams } from 'react-router-dom';
 import Navbar from '../Navbar/Navbar';
 
@@ -10,13 +10,34 @@ const Productdetails = () => {
     const [quantity, setQuantity] = useState(0);
     const [isAdding] = useState(false);
     const [isAdded] = useState(false);
-    console.log(id);
+    const [user, setUser] = useState(null); 
+    const [carts, setCarts] = useState([]);
+    useEffect(() => {
+        fetch("http://localhost:5000/", { credentials: 'include' })
+            .then(response => response.json())
+            .then(data => {
+                setUser(data.user);
+                setCarts(data.carts);
+            })
+            .catch(error => console.error("Error fetching data:", error));
+    }, []);  
     useEffect(() => {
         fetch(`http://localhost:5000/products/${id}`)
             .then(response => response.json())
             .then(data => {
                 setProduct(data);
                 console.log("Product details fetched:", data);
+            })
+            .catch(error => {
+                console.error("Error fetching product details:", error);
+            });
+    }, [id]);
+    useEffect(() => {
+        fetch(`http://localhost:5000/products/${id}/seller`)
+            .then(response => response.json())
+            .then(data => {
+                setProduct(data);
+                console.log("Product seller details fetched:", data);
             })
             .catch(error => {
                 console.error("Error fetching product details:", error);
@@ -35,7 +56,7 @@ const Productdetails = () => {
     }, [id]);
     return (
         <div className='min-h-screen bg-gradient-to-br from-purple-700 via-indigo-800 to-blue-900'>
-            <Navbar/>
+            <Navbar  user={user} carts={carts} setCarts={setCarts} />
             
             {/* Product Details Section */}
             <div className='max-w-[1440px] mx-auto px-20 py-16'>
@@ -100,6 +121,47 @@ const Productdetails = () => {
                                         <span>{isAdding ? "Adding..." : "Add to Cart"}</span>
                                     </>
                                 )}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Seller Information Section */}
+                <div className='mt-10 backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl overflow-hidden'>
+                    {/* Header with gradient background */}
+                    <div className='bg-gradient-to-r from-pink-500/20 via-purple-500/20 to-blue-500/20 border-b border-white/20 px-8 py-6'>
+                        <h2 className='text-3xl font-bold text-white mb-4'>Sold By</h2>
+                        <div className='flex items-center gap-4'>
+                            {/* Seller Avatar */}
+                            <div className='w-20 h-20 rounded-2xl bg-gradient-to-br from-pink-500 via-purple-500 to-blue-500 flex items-center justify-center text-white text-2xl font-bold shadow-xl transform hover:scale-105 transition-all duration-200'>
+                                {product[0]?.seller_shop_name?.charAt(0)?.toUpperCase() || 'S'}
+                            </div>
+                            
+                            {/* Seller Name and Badge */}
+                            <div className='flex-1'>
+                                <div className='flex items-center gap-3 mb-1'>
+                                    <h2 className='text-2xl font-bold text-white'>
+                                        {product[0]?.seller_shop_name || 'Official Store'}
+                                    </h2>
+                                    <span className='px-3 py-1 bg-green-500/20 border border-green-400/50 text-green-300 text-xs font-semibold rounded-full'>
+                                        ✓ Verified
+                                    </span>
+                                </div>
+                                <div className='flex items-center gap-2'>
+                                    <div className='flex gap-0.5'>
+                                        {Array.from({ length: 5 }).map((_, index) => (
+                                            <span key={index} className={`text-base ${index < Math.floor(product[0]?.seller_rating || 4.5) ? 'text-yellow-400' : 'text-white/30'}`}>★</span>
+                                        ))}
+                                    </div>
+                                    <span className='text-white/70 text-sm'>
+                                        {product[0]?.seller_rating || '4.5'} Rating
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            {/* Visit Shop Button */}
+                            <button className='px-6 py-3 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-white font-semibold rounded-xl hover:shadow-2xl hover:shadow-pink-500/50 hover:scale-105 transition-all duration-200'>
+                                Visit Shop
                             </button>
                         </div>
                     </div>
