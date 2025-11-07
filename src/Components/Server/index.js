@@ -96,18 +96,57 @@ app.get("/products/:id",(req,res) => {
     });
 })
 
-app.get("/reviews/:id",(req,res) => {
+app.get("/reviews/:id", (req, res) => {
     const id = parseInt(req.params.id);
-    const sql = "SELECT * FROM reviews WHERE product_id = ?";
+    const sql = `
+        SELECT id, product_id, reviewer, review_description, 
+               number_of_star, date, sentiment, confidence, 
+               sentiment_color, text_color
+        FROM reviews 
+        WHERE product_id = ?
+        ORDER BY date DESC
+    `;
     con.query(sql, [id], (err, results) => {
         if (err) return res.status(500).json({ error: err.message });
-        if (results.length === 0){
-            return res.status(401).json({ error: "No Products Found" });
+        
+        if (results.length === 0) {
+            return res.json({ 
+                success: true,
+                message: "No reviews found", 
+                reviews: [],
+                stats: {
+                    total: 0,
+                    positive: 0,
+                    negative: 0,
+                    overallRating: 0,
+                    percentage: 0
+                }
+            });
         }
-        console.log(id)
-        res.json(results);
+        
+        // Calculate overall statistics
+        const positive = results.filter(r => r.sentiment === 'positive').length;
+        const negative = results.filter(r => r.sentiment === 'negative').length;
+        const total = results.length;
+        const percentage = total > 0 ? (positive / total) * 100 : 0;
+        
+        // Convert percentage to 1-5 rating scale
+        const overallRating = Math.round((percentage / 100) * 5 * 10) / 10; // Round to 1 decimal
+        
+        res.json({
+            success: true,
+            message: `Found ${total} reviews`,
+            reviews: results,
+            stats: {
+                total: total,
+                positive: positive,
+                negative: negative,
+                overallRating: overallRating,
+                percentage: Math.round(percentage)
+            }
+        });
     });
-})
+});
 
 app.post("/update", (req, res) => {
     const { status ,id } = req.body;
