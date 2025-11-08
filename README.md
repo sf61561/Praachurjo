@@ -184,3 +184,32 @@ Praachurjo/
 └── README.md
 
 ```
+
+## 📈 Potential Impact
+
+### 💰 Economic Empowerment
+- SMEs increase profitability by **15–25%** through optimized pricing and supplier access.  
+- Reduces waste and logistics costs via smart clustering and rider delivery.  
+
+### 🤝 Enhanced Collaboration
+- Data insights enable **collective bargaining**, shared logistics, and better cooperation.  
+
+### 🏦 Financial Inclusion
+- Credit access for small retailers and riders through verified digital trading history.  
+
+### 🌐 Digital Transformation
+- Introduces SMEs to **AI-driven tools**, analytics, and automation.  
+
+### 🇧🇩 Smart Bangladesh Alignment
+- Promotes **innovation**, **data-driven governance**, and **inclusive growth** — core to the **Smart Bangladesh Vision**.
+
+---
+
+## 📫 Contact
+For collaboration or inquiries:  
+📧 **teampraachurjo.bd@gmail.com**  
+🌐 [GitHub Repository](https://github.com/sf61561/Praachurjo)  
+
+---
+
+> “Praachurjo — Empowering every entrepreneur to be part of Smart Bangladesh.”
