@@ -29,8 +29,6 @@ SMEs are the backbone of Bangladesh’s economy but face key challenges:
 
 These barriers result in **slow digital transformation**, **limited growth**, and **fragmented operations** — restricting SMEs’ full potential to contribute to Smart Bangladesh.
 
-![Praachurjo Banner](https://i.ibb.co/5XTQ0LR/banner-Praachurjo.png)
-
 ---
 
 ## 💡 Our Solution — SME-Connect AI
@@ -48,7 +46,7 @@ Organizes SMEs by **product, region, and behavior** to enable:
 - Regional collaboration & resource sharing  
 
 <p align="center">
-  <img src="assets/feature-sme-clusters.png" alt="Smart SME Clusters" width="700"/>
+  <img src="https://i.postimg.cc/HxpYf6KF/categories.png" alt="Smart SME Clusters" width="700"/>
 </p>
 
 ---
@@ -110,9 +108,6 @@ A decentralized **delivery system** connecting local riders:
 | **Integrations** | Firebase Auth, Payment APIs |
 | **Deployment** | AWS / Google Cloud / Vercel |
 
-<p align="center">
-  <img src="assets/architecture-diagram.png" alt="System Architecture" width="800"/>
-</p>
 
 ### 🧬 AI/ML Highlights
 - **Clustering:** HDBSCAN + Autoencoders  
@@ -120,7 +115,11 @@ A decentralized **delivery system** connecting local riders:
 - **Price Optimization:** Reinforcement Learning  
 - **Supplier Recommendation:** Graph Neural Networks  
 - **Credit Scoring:** Gradient Boosted Trees (XGBoost)  
-- **Chatbot Intelligence:** Fine-tuned LLM integrated via RAG pipeline  
+- **Chatbot Intelligence:** Fine-tuned LLM integrated via RAG pipeline
+
+  <p align="center">
+  <img src="https://i.postimg.cc/8CFfx6B3/system-architecture.png" alt="System Architecture" width="800"/>
+</p>
 
 ---
 
