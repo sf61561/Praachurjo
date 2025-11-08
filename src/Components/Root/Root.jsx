@@ -18,7 +18,9 @@ const Root = () => {
             .catch(error => console.error("Error fetching data:", error));
     }, []);  
     return (
-        <div className="bg-gradient-to-br from-purple-700 via-indigo-800 to-blue-900 min-h-screen">
+        // <div className="bg-gradient-to-br from-purple-700 via-indigo-800 to-blue-900 min-h-screen">
+        <div className="bg-gradient-to-br from-gray-950 via-neutral-900 to-zinc-800 min-h-screen">
+
             <Navbar user={user} carts={carts} setCarts={setCarts} />
             <Slider />
             <Categories />
